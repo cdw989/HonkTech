@@ -28,6 +28,7 @@ namespace HonkTech
 
             CSBuilder.InitialCatalog = InitialCatalog;
             CreateTables(CSBuilder.ConnectionString, DirectoryPath, DataBase);
+            CreateViews(CSBuilder.ConnectionString, DirectoryPath, DataBase);
             LoadDefaultData(CSBuilder.ConnectionString, DirectoryPath, DataBase);
 
         }
@@ -78,6 +79,27 @@ namespace HonkTech
                 catch (Exception)
                 {
                     Console.WriteLine(string.Format("Error with table create command : {0}", TableFile));
+                    throw;
+                }
+
+            }
+
+        }
+        static void CreateViews(string ConnectionString, string DirectoryPath, string Database)
+        {
+
+            foreach (String ViewFile in Directory.GetFiles(@"Views\", "*.sql"))
+            {
+
+                Console.WriteLine(string.Format("Creating View {0}...", ViewFile.Split('.').First()));
+                try
+                {
+                    string CreateViewCommand = File.ReadAllText(ViewFile);
+                    ExecuteStatement(ConnectionString, CreateViewCommand);
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine(string.Format("Error with view create command : {0}", ViewFile));
                     throw;
                 }
 
